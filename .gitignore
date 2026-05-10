@@ -10,3 +10,6 @@ desktop.ini
 
 # Vercel
 .vercel
+
+# Local-only dev server (not deployed)
+serve.js

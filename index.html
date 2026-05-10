@@ -98,6 +98,9 @@
     margin-top: 10px;
     letter-spacing: -0.005em;
   }
+  /* multi-line value (e.g. Highlights): tighter gap between sibling lines
+     so they read as one group, not separate fields. */
+  .hero .meta b + b { margin-top: 4px; }
 
   /* chapter */
   .chapter { padding: 160px 0 60px; }
@@ -325,8 +328,13 @@
   }
   @media (max-width: 720px) {
     .nav { padding: 18px 24px; }
-    .col, .canvas { padding: 0 24px; }
-    .hero h1 { font-size: 40px; line-height: 1.35; }
+    /* min-width:0 lets flex children shrink below their content's intrinsic
+       min-width, so a long unbroken Korean phrase (word-break:keep-all) can't
+       force a horizontal scroll. */
+    .col, .canvas { padding: 0 24px; min-width: 0; }
+    /* Scale down so the longest hero line ("사우디아라비아에서") always fits.
+       Min 30px keeps the statement readable; max stays at the prior 40px. */
+    .hero h1 { font-size: clamp(30px, 8vw, 40px); line-height: 1.35; }
     .chapter h2 { font-size: 36px; line-height: 1.25; }
     .chapter-num { font-size: 12px; padding-top: 0; }
     .chapter .lede { font-size: 16px; }
@@ -338,6 +346,29 @@
     .anchor-stat { padding: 0 24px; }
     .gallery { grid-template-columns: repeat(2, 1fr); padding: 0 24px; }
     .hero .meta { grid-template-columns: 1fr; gap: 20px; }
+
+    /* contact — stack label / heading / links vertically on mobile */
+    .contact { padding: 100px 0 60px; }
+    .contact .head {
+      grid-template-columns: 1fr;
+      gap: 12px;
+      padding: 0 24px;
+    }
+    .contact h2 { margin-bottom: 24px; }
+    .contact .links {
+      grid-template-columns: 1fr;
+      column-gap: 0;
+    }
+    .contact .links dt {
+      padding: 16px 0 4px;
+      border-top: 1px solid var(--line);
+    }
+    .contact .links dd {
+      padding: 0 0 16px;
+      border-top: 0;
+    }
+    /* break long emails / urls if they'd overflow the viewport */
+    .contact .links a { overflow-wrap: anywhere; }
   }
 </style>
 </head>
@@ -353,8 +384,8 @@
     </h1>
     <div class="meta">
       <div>Role<b>Product Designer</b></div>
-      <div>Base<b>Seoul</b></div>
-      <div>From<b>Saudi Arabia</b></div>
+      <div>Based in<b>Korea</b></div>
+      <div>Highlights<b>₩9.0B valuation (11.4% equity)</b><b>+3,000% engagement, 163K views</b></div>
     </div>
   </div>
 </header>
@@ -378,7 +409,7 @@
       <header class="note-head">
         <span class="note-id">01.A</span>
         <h3 class="note-title">Dropbox</h3>
-        <span class="note-year">2024 Q1–Q3</span>
+        <span class="note-year">2024</span>
       </header>
       <p class="note-prose">
         <em>Outdated</em>하다는 드롭박스의 pain point를 정확히 짚었고,<br>
@@ -408,9 +439,6 @@
         드롭박스라는 큰 레퍼런스는 이후 많은 <em>도미노</em> 현상을 일으켰습니다.<br>
         AWS PoC가 <b>잡코리아</b>, <b>CJ</b>, <b>서울대</b>로 인, 아웃바운드 세일즈를 만들었어요.
       </p>
-      <div class="note-stats">
-        <span><span class="v">3</span><span class="k">enterprise wins</span></span>
-      </div>
     </div>
   </article>
 
@@ -425,7 +453,7 @@
       <header class="note-head">
         <span class="note-id">01.C</span>
         <h3 class="note-title">Sheepfarm in Sugarland</h3>
-        <span class="note-year">2010, 2014</span>
+        <span class="note-year">2010—2014</span>
       </header>
       <p class="note-prose">
         Art Director로 시작했지만, 사람과 사업을 같이 만들고 싶었습니다.<br>
@@ -482,7 +510,7 @@
       <header class="note-head">
         <span class="note-id">02.A</span>
         <h3 class="note-title">Sheepfarm의 IP 그리고 팬덤</h3>
-        <span class="note-year">2021, present</span>
+        <span class="note-year">2021</span>
       </header>
       <p class="note-prose">
         캐릭터 백스토리를 의도적으로 <em>비워둔 채</em>, 빈 슬롯을 팬에게 개방했습니다.<br>
@@ -499,14 +527,14 @@
   <article class="note flip">
     <div class="note-media">
       <image-slot id="q2-fanart" shape="rounded" radius="6"
-        src="uploads/q2-fanart.webp"
+        src="uploads/q2-fanart.png"
         placeholder="팬아트 / 코스프레 모음 그리드"></image-slot>
     </div>
     <div class="note-body">
       <header class="note-head">
         <span class="note-id">02.B</span>
         <h3 class="note-title">여러 SNS, 한 사람의 다른 호흡</h3>
-        <span class="note-year">2020, present</span>
+        <span class="note-year">2020</span>
       </header>
       <p class="note-prose">
         같은 톤을 모든 채널에 강제하지 않고, <em>플랫폼별 호흡</em>을 분리해 운영했습니다.<br>
@@ -525,8 +553,8 @@
 <section class="chapter">
   <div class="chapter-head">
     <span class="chapter-num">Q.03</span>
-    <h2>검증된 글로벌 IP를 다뤄왔고,<br>그 끝에 <span class="accent">자체 IP</span>를 새 매체로 옮겨봤습니다.</h2>
-    <p class="lede">레거시 IP 3종 비교 분석 + 자체 IP 메타버스 이식 사례.</p>
+    <h2>검증된 IP는 어떻게 새 매체에서 <span class="accent">다시 작동</span>하는가.</h2>
+    <p class="lede">검증된 글로벌 IP를 다뤄왔고, 그 끝에 자체 IP를 새 매체로 옮겨봤습니다.</p>
   </div>
 
   <!-- 03.A Legacy IP study — logo grid -->
@@ -565,8 +593,8 @@
         <span class="note-year">2021–2023</span>
       </header>
       <p class="note-prose">
-        Q.02의 가설을 메타버스로 옮길 때, 새 세계관이 아닌 <em>기존 팬 행동</em>을 매핑했습니다.<br>
-        자생 팬 활동이 그대로 UGC로 이전돼, 별도 온보딩 캠페인이 필요 없었어요.
+        암호화폐 게임 시장에선 <em>검증된 IP가 곧 투자 지표</em>였습니다.<br>
+        Sheepfarm의 과거 이력이 <b>신뢰 신호</b>가 되어 NFT 홀더 19K, DAU 2K를 모았어요.
       </p>
     </div>
   </article>
@@ -575,7 +603,7 @@
 <!-- ─────────────────────────── CONTACT -->
 <section class="contact">
   <div class="head">
-    <span class="label">Contact</span>
+    <span class="label" aria-hidden="true"></span>
     <div>
       <h2>다음 질문이 있다면, 같이 풀어봅시다</h2>
       <dl class="links">

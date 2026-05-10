@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>아라 — Ara</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0F1419;
+    --card: #1A2332;
+    --accent: #A8C5E8;
+    --fg: #FFFFFF;
+    --sub: #9BA5B7;
+    --line: rgba(168, 197, 232, 0.10);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--fg); }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 1.7;
+    letter-spacing: -0.005em;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: var(--accent); color: var(--bg); }
+
+  /* layout — narrow reading column with optional escapes */
+  .col   { max-width: 620px; margin: 0 auto; padding: 0 32px; }
+  .wide  { max-width: 880px; margin: 0 auto; padding: 0 32px; }
+  .full  { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+
+  /* header — barely there */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+    display: flex; justify-content: space-between;
+    padding: 28px 40px;
+    font-size: 13px; color: var(--sub);
+    pointer-events: none;
+  }
+  .nav span { pointer-events: auto; }
+
+  /* hero */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 160px 0 120px;
+  }
+  .hero h1 {
+    font-family: 'Instrument Serif', 'Inter', serif;
+    font-weight: 400;
+    font-size: clamp(48px, 7.5vw, 104px);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    margin: 0;
+    color: var(--fg);
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .hero .lede {
+    margin-top: 56px;
+    font-size: 22px;
+    line-height: 1.55;
+    color: var(--sub);
+    max-width: 560px;
+    font-weight: 300;
+  }
+  .hero .meta {
+    margin-top: 200px;
+    font-size: 13px;
+    color: var(--sub);
+    letter-spacing: 0.02em;
+  }
+  .hero .meta a { color: var(--sub); }
+
+  /* chapter break */
+  .chapter {
+    padding: 200px 0 80px;
+  }
+  .chapter-num {
+    font-size: 12px;
+    color: var(--sub);
+    opacity: 0.5;
+    letter-spacing: 0.02em;
+    margin-bottom: 32px;
+    font-weight: 400;
+  }
+  .chapter h2 {
+    font-family: 'Instrument Serif', 'Inter', serif;
+    font-weight: 400;
+    font-size: clamp(36px, 5.5vw, 68px);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: var(--fg);
+  }
+  .chapter h2 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .chapter .standfirst {
+    margin-top: 40px;
+    font-size: 21px;
+    line-height: 1.55;
+    color: var(--fg);
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    max-width: 560px;
+  }
+
+  /* prose — running essay text */
+  .prose p {
+    margin: 0 0 1.4em;
+    color: var(--sub);
+  }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose strong {
+    font-weight: 500;
+    color: var(--fg);
+  }
+  .prose em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 1.08em;
+    color: var(--accent);
+    font-weight: 400;
+  }
+  .prose a {
+    color: var(--fg);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+    transition: border-color .2s, color .2s;
+  }
+  .prose a:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* a number that breathes — used inline in prose */
+  .num {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--fg);
+    font-size: 1.15em;
+    letter-spacing: -0.015em;
+  }
+
+  /* a passage that escapes the column — for one big quote-like line */
+  .pull {
+    margin: 96px 0;
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: clamp(28px, 3.4vw, 44px);
+    line-height: 1.25;
+    letter-spacing: -0.018em;
+    color: var(--fg);
+    max-width: 880px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 32px;
+  }
+  .pull .accent { color: var(--accent); }
+
+  /* a single big stat that escapes the column — sparing use */
+  .display-num {
+    margin: 80px 0 80px;
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(80px, 14vw, 200px);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    color: var(--accent);
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 32px;
+  }
+  .display-num .label {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--sub);
+    letter-spacing: 0;
+    margin-top: 32px;
+    line-height: 1.5;
+    max-width: 360px;
+  }
+
+  /* signature row at end of a piece — quiet */
+  .footnote {
+    margin-top: 48px;
+    font-size: 13px;
+    color: var(--sub);
+    opacity: 0.7;
+    letter-spacing: 0.01em;
+  }
+
+  /* contact */
+  .contact { padding: 220px 0 160px; }
+  .contact h2 {
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    font-size: clamp(40px, 6vw, 80px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin: 0 0 64px;
+  }
+  .contact h2 em { font-style: italic; color: var(--accent); }
+  .contact .links {
+    display: flex; flex-direction: column; gap: 4px;
+    font-size: 22px;
+    font-weight: 300;
+  }
+  .contact .links a {
+    color: var(--fg);
+    text-decoration: none;
+    padding: 4px 0;
+    transition: color .2s;
+  }
+  .contact .links a:hover { color: var(--accent); }
+  .contact .links span { color: var(--sub); margin-right: 18px; font-size: 13px; display: inline-block; min-width: 64px; }
+
+  .footer {
+    padding: 80px 0 60px;
+    font-size: 12px; color: var(--sub); opacity: 0.5;
+    display: flex; justify-content: space-between;
+  }
+
+  @media (max-width: 720px) {
+    .nav { padding: 20px 24px; }
+    .col, .wide, .full, .pull, .display-num { padding: 0 24px; }
+    .hero { padding: 120px 0 80px; }
+    .hero .meta { margin-top: 100px; }
+    .chapter { padding: 140px 0 40px; }
+  }
+
+  /* ─── PRINT ─── */
+  @page {
+    size: A4 portrait;
+    margin: 18mm 16mm;
+  }
+  @media print {
+    html, body {
+      background: var(--bg) !important;
+      color: var(--fg) !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    body { font-size: 12pt; line-height: 1.65; }
+    .nav { display: none; }
+
+    .hero { min-height: auto; padding: 0 0 32mm; break-after: page; }
+    .hero h1 { font-size: 56pt; line-height: 1.02; }
+    .hero .lede { font-size: 16pt; margin-top: 28pt; }
+    .hero .meta { margin-top: 60pt; }
+
+    .chapter { padding: 0 0 24mm; break-before: page; }
+    .chapter h2 { font-size: 36pt; line-height: 1.1; }
+    .chapter .standfirst { font-size: 15pt; margin-top: 24pt; }
+    .chapter-num { margin-bottom: 18pt; }
+
+    .pull {
+      margin: 24mm auto;
+      font-size: 22pt;
+      line-height: 1.3;
+      break-inside: avoid;
+    }
+
+    .display-num {
+      margin: 18mm auto;
+      font-size: 84pt;
+      line-height: 1;
+      break-inside: avoid;
+    }
+    .display-num .label { font-size: 11pt; margin-top: 16pt; }
+
+    .prose p { break-inside: avoid; }
+    .prose a { border-color: rgba(168,197,232,0.3); }
+
+    .contact { padding: 0 0 12mm; break-before: page; }
+    .contact h2 { font-size: 44pt; margin-bottom: 32pt; }
+    .contact .links { font-size: 16pt; }
+
+    .footer { padding: 16mm 0 0; }
+
+    /* widths in print */
+    .col { max-width: 150mm; padding: 0; }
+    .wide, .full { max-width: 180mm; padding: 0; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <span>아라 / Ara</span>
+  <span>2026</span>
+</nav>
+
+<!-- ─────────────────────────────────────────── HERO -->
+<header class="hero">
+  <div class="col">
+    <h1>
+      사우디아라비아에서 태어났기에<br />
+      만든 이름, <em>아라.</em>
+    </h1>
+    <p class="lede">
+      태어날 때부터 늘 혼란과 경계선 속에 있었기에<br />
+      지금의 제가 있습니다.
+    </p>
+    <p class="meta">
+      세 개의 질문, 그리고 그 질문에 대답하기 위해 만들어 본 것들.
+    </p>
+  </div>
+</header>
+
+<!-- ─────────────────────────────────────────── Q1 -->
+<section class="chapter">
+  <div class="col">
+    <p class="chapter-num">하나.</p>
+    <h2>콘텐츠와 감정은 어떻게 <em>비즈니스 임팩트</em>로 번역되는가.</h2>
+    <p class="standfirst">
+      숫자는 결과일 뿐, 출발점은 늘 누군가의 마음에 닿는 한 문장이었습니다.
+    </p>
+  </div>
+
+  <div class="col prose" style="margin-top: 80px;">
+    <p>
+      <strong>Dropbox</strong>의 기업 영상은 처음부터 잘 풀린 프로젝트가 아니었습니다.
+      브랜드 톤이 너무 기업적이라는 전제를 깨고, 사람의 호흡과 침묵을 살린 컷으로 다시 짰을 때
+      비로소 인게이지먼트가 두 자릿수에서 네 자릿수로 움직였습니다.
+    </p>
+  </div>
+
+  <div class="display-num">
+    +3,000%
+    <span class="label">Dropbox 기업 영상 인게이지먼트 증가율 · 도달 16만 3천</span>
+  </div>
+
+  <div class="col prose">
+    <p>
+      <strong>도미노 세일즈</strong>는 AWS PoC 한 건에서 시작했습니다.
+      기술 데모로 팔리지 않는다는 걸 그때 배웠습니다 — 사람들은 이 도구가
+      <em>우리 팀의 어떤 하루를 바꾸는가</em>를 보고 싶어 했습니다.
+      그 다음 이야기가 잡코리아였고, 서울대였습니다.
+    </p>
+    <p>
+      <strong>nooslab</strong>은 작은 스튜디오로 시작해서
+      <span class="num">90억</span>의 밸류에이션까지 갔습니다.
+      제 지분은 <span class="num">11.4%</span>였고, 숫자보다 더 오래 기억되는 건
+      그 회사를 왜 만들었는지에 대해 우리가 합의했던 어느 새벽이었습니다.
+    </p>
+    <p>
+      <strong>텀블벅</strong>으로는 <span class="num">1,400만 원</span>을 모았습니다.
+      자금이 아니라 청중 검증이었습니다 — 펀딩은 시장에 묻는 가장 빠른
+      질문 형식이라는 걸 그때 확신했습니다.
+    </p>
+    <p class="footnote">2018 — 2024.</p>
+  </div>
+</section>
+
+<!-- pull quote between chapters -->
+<p class="pull">
+  팔로워는 광고로 살 수 있어도, <span class="accent">팬은 살 수 없습니다.</span>
+</p>
+
+<!-- ─────────────────────────────────────────── Q2 -->
+<section class="chapter">
+  <div class="col">
+    <p class="chapter-num">둘.</p>
+    <h2>팬덤은 어떻게 <em>형성</em>되는가.</h2>
+    <p class="standfirst">
+      누군가 손으로 그리고, 옷을 입고, 기록을 남기게 만드는 일.
+      그 이전 단계의 작은 결정들에 대하여.
+    </p>
+  </div>
+
+  <div class="col prose" style="margin-top: 80px;">
+    <p>
+      <strong>Sheepfarm</strong>의 팬아트는 <span class="num">1,000개</span>를 넘겼고,
+      코스프레는 우리가 시킨 적이 한 번도 없었습니다.
+      캐릭터에 의도적으로 빈틈을 남겨두자, 사람들이 그 공간을 채우기 시작했습니다.
+      완성된 세계는 사랑받기 어렵다는 걸 그때 알았습니다.
+    </p>
+    <p>
+      개인 채널은 세 개를 운영합니다.
+      <strong>YouTube</strong>는 <span class="num">14,000명</span>이 사고를 같이 따라오는 곳,
+      <strong>Twitter</strong>는 <span class="num">5,000명</span>이 반사적으로 반응하는 곳,
+      <strong>Instagram</strong>은 <span class="num">2,000명</span>이 일상을 따라오는 곳입니다.
+      같은 톤을 우기지 않는 것 — 채널마다 다른 호흡으로 같은 사람이 되어 있는 것
+      — 그것이 작지만 단단한 팬덤의 출발선이었습니다.
+    </p>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────── Q3 -->
+<section class="chapter">
+  <div class="col">
+    <p class="chapter-num">셋.</p>
+    <h2>검증된 IP는 어떻게 <em>새로운 기술 맥락</em>에서 부활하는가.</h2>
+    <p class="standfirst">
+      매체는 바뀌어도 사람들이 진짜로 듣고 싶은 이야기는 같았습니다.
+    </p>
+  </div>
+
+  <div class="col prose" style="margin-top: 80px;">
+    <p>
+      <strong>Hello Kitty</strong>, <strong>Dragon Ball</strong>,
+      <strong>Power Rangers</strong> — 40년을 넘긴 IP들이
+      AR과 VR과 Web3에서 어떻게 다시 호명되는지 비교하면서,
+      매체가 바뀔 때마다 살아남는 IP에는 일정한 문법이 있다는 걸 봤습니다.
+      세계관이 강한 IP가 아니라, <em>관계가 끝나지 않는 IP.</em>
+    </p>
+    <p>
+      그 가설을 가지고 만든 것이 <strong>Sheepfarm in Meta-land</strong>였습니다.
+      자생한 팬덤을 메타버스 컨텍스트로 옮겨 심으면서,
+      IP를 '리부트'하는 것이 아니라 팬덤이 이미 가지고 있던 욕망을
+      다른 형식으로 풀어주는 일에 가까웠습니다.
+    </p>
+  </div>
+</section>
+
+<!-- closing pull -->
+<p class="pull">
+  결국 모든 일은 <span class="accent">사람이 사람에게 무엇을 남기는가</span>에 대한 질문이었습니다.
+</p>
+
+<!-- ─────────────────────────────────────────── CONTACT -->
+<section class="contact">
+  <div class="col">
+    <h2>이야기의 다음 장을<br /><em>함께 쓰고 싶다면.</em></h2>
+    <div class="links">
+      <a href="#"><span>linkedin</span>linkedin.com/in/ara</a>
+      <a href="mailto:ara@—.com"><span>email</span>ara@—.com</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="full" style="display:flex; justify-content:space-between;">
+    <span>© 아라 · 2026</span>
+    <span>Born in Saudi Arabia · Based in Seoul</span>
+  </div>
+</footer>
+
+<script>
+  (async () => {
+    if (document.fonts && document.fonts.ready) {
+      try { await document.fonts.ready; } catch (e) {}
+    }
+    setTimeout(() => window.print(), 500);
+  })();
+</script>
+</body>
+</html>

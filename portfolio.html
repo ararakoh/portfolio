@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>아라, Ara, Field notes</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Nanum+Myeongjo:wght@400;700&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<style>
+  :root {
+    --bg: #0F1419;
+    --bg-deep: #0A0F18;
+    --card: #1A2332;
+    --accent: #A8C5E8;
+    --fg: #FFFFFF;
+    --sub: #9BA5B7;
+    --muted: #6B7280;
+    --line: rgba(168, 197, 232, 0.10);
+
+    --font-display: 'Cormorant Garamond', 'Nanum Myeongjo', serif; /* hero only */
+    --font-headline: 'Pretendard', 'Inter', system-ui, sans-serif;
+    --font-body: 'Pretendard', 'Inter', system-ui, sans-serif;
+    --font-number: 'Inter', 'Pretendard', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+
+    --max-width: 720px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--fg); }
+  body {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.75;
+    letter-spacing: -0.005em;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4, p, span, a, dt, dd {
+    word-break: keep-all; overflow-wrap: break-word;
+  }
+  ::selection { background: var(--accent); color: var(--bg); }
+
+  /* layout */
+  .col    { max-width: var(--max-width); margin: 0 auto; padding: 0 32px; }
+  .canvas { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+
+  /* nav */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+    display: flex; justify-content: space-between;
+    padding: 24px 32px;
+    font-family: var(--font-mono);
+    font-size: 11px; color: var(--muted);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(15,20,25,0.85), rgba(15,20,25,0));
+  }
+  .nav span { pointer-events: auto; }
+  .nav .brand { color: var(--fg); letter-spacing: 0.04em; }
+
+  /* hero */
+  .hero {
+    min-height: 92vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 140px 0 100px;
+  }
+  /* hero — the one place serif stays */
+  .hero h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(40px, 5.4vw, 72px);
+    line-height: 1.35;
+    letter-spacing: -0.005em;
+    margin: 0;
+    max-width: 640px;
+  }
+  .hero h1 .accent { color: var(--accent); }
+  .hero .meta {
+    margin-top: 96px;
+    font-family: var(--font-headline);
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    display: grid; grid-template-columns: repeat(3, max-content);
+    gap: 72px;
+  }
+  .hero .meta b {
+    display: block;
+    color: var(--fg);
+    font-weight: 500;
+    font-size: 17px;
+    margin-top: 10px;
+    letter-spacing: -0.005em;
+  }
+
+  /* chapter */
+  .chapter { padding: 160px 0 60px; }
+  .chapter-head {
+    display: grid; grid-template-columns: 1fr;
+    gap: 24px; align-items: baseline;
+    max-width: var(--max-width); margin: 0 auto; padding: 0 32px;
+  }
+  .chapter-num { display: none; }
+  .chapter-num {
+    font-family: var(--font-mono);
+    font-size: 14px; color: var(--accent);
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding-top: 14px;
+  }
+  .chapter h2 {
+    font-family: var(--font-headline);
+    font-weight: 400;
+    font-size: clamp(40px, 4.5vw, 58px);
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    margin: 0;
+    color: var(--fg);
+  }
+  .chapter h2 .accent { color: var(--accent); font-weight: 400; }
+  .chapter .lede {
+    grid-column: 1;
+    margin-top: 20px;
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--sub);
+    max-width: 620px;
+  }
+
+  /* field note — the core operator block */
+  .note {
+    margin: 64px auto;
+    max-width: 1100px; padding: 0 32px;
+    display: grid;
+    grid-template-columns: minmax(280px, 0.85fr) 1.15fr;
+    gap: 64px;
+    align-items: start;
+  }
+  .note.flip {
+    grid-template-columns: 1.15fr minmax(280px, 0.85fr);
+  }
+  .note.flip .note-media { order: 2; }
+  .note-media { display: flex; flex-direction: column; gap: 12px; }
+  .note-media image-slot {
+    display: block; width: 100%; height: auto; aspect-ratio: 1/1;
+    background: var(--card);
+  }
+  .note-media .caption {
+    font-family: var(--font-mono);
+    font-size: 10.5px; color: var(--muted);
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+
+  .note-body { padding-top: 4px; }
+  .note-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .note-id { display: none; }
+  .note-title {
+    font-family: var(--font-headline);
+    font-weight: 500;
+    font-size: 24px;
+    letter-spacing: -0.012em;
+    color: var(--fg);
+    flex: 1;
+    margin: 0;
+  }
+  .note-year {
+    font-family: var(--font-mono);
+    font-size: 12px; color: var(--muted); letter-spacing: 0.04em;
+  }
+
+  .note-rows {
+    margin: 0; padding: 0;
+    display: grid; grid-template-columns: 64px 1fr;
+    gap: 16px 20px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .note-rows dt {
+    font-family: var(--font-mono);
+    font-size: 12px; color: var(--muted);
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding-top: 5px;
+  }
+  .note-rows dd {
+    margin: 0; color: var(--sub);
+  }
+  .note-rows dd b { color: var(--fg); font-weight: 500; }
+  .note-rows dd .accent { color: var(--accent); font-weight: 500; }
+  .note-prose {
+    margin: 0 0 28px;
+    color: var(--fg);
+    font-size: 16px;
+    line-height: 1.75;
+    letter-spacing: -0.005em;
+    text-wrap: pretty;
+    word-break: keep-all;
+  }
+  .note-prose b { color: var(--fg); font-weight: 500; }
+  .note-prose em { color: var(--accent); font-style: normal; }
+
+  .note-stats {
+    display: flex; flex-wrap: wrap;
+    gap: 8px 28px;
+    align-items: baseline;
+  }
+  .note-stats .v {
+    font-family: var(--font-number);
+    font-weight: 500; color: var(--accent);
+    font-size: 22px; letter-spacing: -0.02em;
+    font-feature-settings: 'tnum' 1;
+  }
+  .note-stats .k {
+    font-family: var(--font-mono);
+    font-size: 10.5px; color: var(--muted);
+    letter-spacing: 0.06em; text-transform: uppercase;
+    margin-left: 6px;
+  }
+
+  /* one anchor display number per chapter — restrained */
+  .anchor-stat {
+    margin: 0 auto 64px; max-width: 1100px; padding: 0 32px;
+    display: grid; grid-template-columns: 80px 1fr; gap: 24px;
+    border-top: 1px solid var(--line);
+    padding-top: 32px;
+  }
+  .anchor-stat .k {
+    font-family: var(--font-mono);
+    font-size: 10.5px; color: var(--muted);
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding-top: 18px;
+  }
+  .anchor-stat .v {
+    font-family: var(--font-number);
+    font-weight: 500;
+    font-size: clamp(64px, 9vw, 128px);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--accent);
+    font-feature-settings: 'tnum' 1;
+  }
+  .anchor-stat .note {
+    margin: 0; padding: 0; max-width: none; display: block;
+  }
+  .anchor-stat .desc {
+    margin-top: 12px;
+    font-size: 14px; color: var(--sub); line-height: 1.6;
+    max-width: 520px;
+  }
+
+  /* gallery (Q3) — logo grid */
+  .gallery {
+    margin: 48px auto 64px;
+    max-width: 1100px; padding: 0 32px;
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px;
+  }
+  .gallery image-slot {
+    display: block; width: 100%; height: auto; aspect-ratio: 1/1;
+    background: #F4F4F0;
+    border-radius: 6px;
+  }
+  /* contain the logo inside the slot with breathing room */
+  .gallery image-slot::part(frame) { padding: 18%; background: transparent; }
+  .gallery image-slot::part(image) { object-fit: contain; }
+
+  /* contact */
+  .contact { padding: 160px 0 80px; }
+  .contact .head {
+    display: grid; grid-template-columns: 80px 1fr; gap: 24px;
+    max-width: var(--max-width); margin: 0 auto; padding: 0 32px;
+  }
+  .contact .head .label {
+    font-family: var(--font-mono);
+    font-size: 11px; color: var(--accent);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .contact h2 {
+    font-family: var(--font-headline);
+    font-weight: 400;
+    font-size: clamp(20px, 2.2vw, 26px);
+    line-height: 1.6;
+    letter-spacing: 0.005em;
+    margin: 0 0 40px;
+    color: var(--fg);
+  }
+  .contact .links {
+    display: grid; grid-template-columns: 80px 1fr;
+    column-gap: 24px; row-gap: 0;
+    font-family: var(--font-mono);
+    font-size: 14px;
+  }
+  .contact .links dt {
+    color: var(--muted);
+    font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+  }
+  .contact .links dd {
+    margin: 0; padding: 14px 0;
+    border-top: 1px solid var(--line);
+  }
+  .contact .links a {
+    color: var(--fg); text-decoration: none;
+    transition: color .15s;
+  }
+  .contact .links a:hover { color: var(--accent); }
+
+  @media (max-width: 880px) {
+    .note, .note.flip {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .note.flip .note-media { order: initial; }
+    .gallery { grid-template-columns: repeat(3, 1fr); }
+    .anchor-stat { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 720px) {
+    .nav { padding: 18px 24px; }
+    .col, .canvas { padding: 0 24px; }
+    .hero h1 { font-size: 40px; line-height: 1.35; }
+    .chapter h2 { font-size: 36px; line-height: 1.25; }
+    .chapter-num { font-size: 12px; padding-top: 0; }
+    .chapter .lede { font-size: 16px; }
+    .note-title { font-size: 20px; }
+    .chapter { padding: 100px 0 32px; }
+    .chapter-head { grid-template-columns: 1fr; gap: 12px; padding: 0 24px; }
+    .chapter .lede { grid-column: 1; margin-top: 12px; }
+    .note { padding: 0 24px; }
+    .anchor-stat { padding: 0 24px; }
+    .gallery { grid-template-columns: repeat(2, 1fr); padding: 0 24px; }
+    .hero .meta { grid-template-columns: 1fr; gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─────────────────────────── HERO -->
+<header class="hero">
+  <div class="col">
+    <h1>
+      사우디아라비아에서<br />
+      태어났기에<br />
+      만든 이름, <span class="accent">아라.</span>
+    </h1>
+    <div class="meta">
+      <div>Role<b>Product Designer</b></div>
+      <div>Base<b>Seoul</b></div>
+      <div>From<b>Saudi Arabia</b></div>
+    </div>
+  </div>
+</header>
+
+<!-- ─────────────────────────── Q1 -->
+<section class="chapter">
+  <div class="chapter-head">
+    <span class="chapter-num">Q.01</span>
+    <h2>콘텐츠를 <span class="accent">비즈니스 임팩트</span>로 번역한 사례.</h2>
+    <p class="lede">B2B 세일즈, 펀딩, 기업가치, 출력은 다르지만 같은 비즈니스 임팩트 패턴.</p>
+  </div>
+
+  <!-- 01.A Dropbox -->
+  <article class="note">
+    <div class="note-media">
+      <image-slot id="q1-dropbox" shape="rounded" radius="6"
+        src="uploads/q1-dropbox.webp"
+        placeholder="Dropbox 웹툰 캠페인 키비주얼"></image-slot>
+    </div>
+    <div class="note-body">
+      <header class="note-head">
+        <span class="note-id">01.A</span>
+        <h3 class="note-title">Dropbox</h3>
+        <span class="note-year">2024 Q1–Q3</span>
+      </header>
+      <p class="note-prose">
+        <em>Outdated</em>하다는 드롭박스의 pain point를 정확히 짚었고,<br>
+        스토리텔링으로 새롭게 선보이자 폭발적인 인게이지먼트가 나타났죠.
+      </p>
+      <div class="note-stats">
+        <span><span class="v">+3,000%</span><span class="k">engagement</span></span>
+        <span><span class="v">163K</span><span class="k">views</span></span>
+      </div>
+    </div>
+  </article>
+
+  <!-- 01.B Domino sales -->
+  <article class="note flip">
+    <div class="note-media">
+      <image-slot id="q1-retrix" shape="rounded" radius="6"
+        src="uploads/q1-retrix.webp"
+        placeholder="Tumta-Retrix 랜딩 페이지 스크린샷"></image-slot>
+    </div>
+    <div class="note-body">
+      <header class="note-head">
+        <span class="note-id">01.B</span>
+        <h3 class="note-title">연속적인 세일즈 도미노</h3>
+        <span class="note-year">2024</span>
+      </header>
+      <p class="note-prose">
+        드롭박스라는 큰 레퍼런스는 이후 많은 <em>도미노</em> 현상을 일으켰습니다.<br>
+        AWS PoC가 <b>잡코리아</b>, <b>CJ</b>, <b>서울대</b>로 인, 아웃바운드 세일즈를 만들었어요.
+      </p>
+      <div class="note-stats">
+        <span><span class="v">3</span><span class="k">enterprise wins</span></span>
+      </div>
+    </div>
+  </article>
+
+  <!-- 01.C nooslab -->
+  <article class="note">
+    <div class="note-media">
+      <image-slot id="q1-nooslab" shape="rounded" radius="6"
+        src="uploads/q1-nooslab.webp"
+        placeholder="nooslab 제품/팀 사진"></image-slot>
+    </div>
+    <div class="note-body">
+      <header class="note-head">
+        <span class="note-id">01.C</span>
+        <h3 class="note-title">Sheepfarm in Sugarland</h3>
+        <span class="note-year">2010, 2014</span>
+      </header>
+      <p class="note-prose">
+        Art Director로 시작했지만, 사람과 사업을 같이 만들고 싶었습니다.<br>
+        공동창업한 스튜디오는 <em>90억</em> 밸류로 성장했고, 저는 11.4%의 지분을 가져갔습니다.
+      </p>
+      <div class="note-stats">
+        <span><span class="v">₩9.0B</span><span class="k">valuation</span></span>
+        <span><span class="v">11.4%</span><span class="k">equity</span></span>
+      </div>
+    </div>
+  </article>
+
+  <!-- 01.D Tumblbug -->
+  <article class="note flip">
+    <div class="note-media">
+      <image-slot id="q1-tumblbug" shape="rounded" radius="6"
+        src="uploads/q1-tumblbug.webp"
+        placeholder="텀블벅 프로젝트 페이지"></image-slot>
+    </div>
+    <div class="note-body">
+      <header class="note-head">
+        <span class="note-id">01.D</span>
+        <h3 class="note-title">텀블벅</h3>
+        <span class="note-year">2017</span>
+      </header>
+      <p class="note-prose">
+        펀딩은 자금이 아니라 <em>청중에게 묻는</em> 가장 빠른 형식이었습니다.<br>
+        711명이 답을 보내왔고, 달성률은 202%였습니다.
+      </p>
+      <div class="note-stats">
+        <span><span class="v">711</span><span class="k">backers</span></span>
+        <span><span class="v">202%</span><span class="k">funded</span></span>
+      </div>
+    </div>
+  </article>
+</section>
+
+<!-- ─────────────────────────── Q2 -->
+<section class="chapter">
+  <div class="chapter-head">
+    <span class="chapter-num">Q.02</span>
+    <h2>팬덤은 어떻게 <span class="accent">자생</span>하는가.</h2>
+    <p class="lede">조작된 도달이 아니라, 손으로 그리고 옷을 입게 만드는 신호.</p>
+  </div>
+
+  <!-- 02.A Sheepfarm -->
+  <article class="note">
+    <div class="note-media">
+      <image-slot id="q2-sheep" shape="rounded" radius="6"
+        src="uploads/q2-sheep.webp"
+        placeholder="Sheepfarm 양 캐릭터 키비주얼"></image-slot>
+    </div>
+    <div class="note-body">
+      <header class="note-head">
+        <span class="note-id">02.A</span>
+        <h3 class="note-title">Sheepfarm의 IP 그리고 팬덤</h3>
+        <span class="note-year">2021, present</span>
+      </header>
+      <p class="note-prose">
+        캐릭터 백스토리를 의도적으로 <em>비워둔 채</em>, 빈 슬롯을 팬에게 개방했습니다.<br>
+        완결된 IP는 2차 창작 장벽이 높다는 가설은 1,000장 넘는 팬아트로 증명됐어요.
+      </p>
+      <div class="note-stats">
+        <span><span class="v">1,000+</span><span class="k">organic fan art</span></span>
+        <span><span class="v">∅</span><span class="k">paid cosplay</span></span>
+      </div>
+    </div>
+  </article>
+
+  <!-- 02.B SNS — anchor stat with breakdown -->
+  <article class="note flip">
+    <div class="note-media">
+      <image-slot id="q2-fanart" shape="rounded" radius="6"
+        src="uploads/q2-fanart.webp"
+        placeholder="팬아트 / 코스프레 모음 그리드"></image-slot>
+    </div>
+    <div class="note-body">
+      <header class="note-head">
+        <span class="note-id">02.B</span>
+        <h3 class="note-title">여러 SNS, 한 사람의 다른 호흡</h3>
+        <span class="note-year">2020, present</span>
+      </header>
+      <p class="note-prose">
+        같은 톤을 모든 채널에 강제하지 않고, <em>플랫폼별 호흡</em>을 분리해 운영했습니다.<br>
+        유튜브, 트위터, 인스타그램, 각 채널이 자기 속도로 자랐어요.
+      </p>
+      <div class="note-stats">
+        <span><span class="v">14K</span><span class="k">YouTube</span></span>
+        <span><span class="v">5K</span><span class="k">Twitter</span></span>
+        <span><span class="v">2K</span><span class="k">Instagram</span></span>
+      </div>
+    </div>
+  </article>
+</section>
+
+<!-- ─────────────────────────── Q3 -->
+<section class="chapter">
+  <div class="chapter-head">
+    <span class="chapter-num">Q.03</span>
+    <h2>검증된 글로벌 IP를 다뤄왔고,<br>그 끝에 <span class="accent">자체 IP</span>를 새 매체로 옮겨봤습니다.</h2>
+    <p class="lede">레거시 IP 3종 비교 분석 + 자체 IP 메타버스 이식 사례.</p>
+  </div>
+
+  <!-- 03.A Legacy IP study — logo grid -->
+  <div class="gallery">
+    <image-slot id="q3-logo-1" shape="rounded" radius="6" fit="contain" src="uploads/q3-logo-1.webp" placeholder="Logo 1"></image-slot>
+    <image-slot id="q3-logo-2" shape="rounded" radius="6" fit="contain" src="uploads/q3-logo-2.webp" placeholder="Logo 2"></image-slot>
+    <image-slot id="q3-logo-3" shape="rounded" radius="6" fit="contain" src="uploads/q3-logo-3.webp" placeholder="Logo 3"></image-slot>
+    <image-slot id="q3-logo-4" shape="rounded" radius="6" fit="contain" src="uploads/q3-logo-4.webp" placeholder="Logo 4"></image-slot>
+    <image-slot id="q3-logo-5" shape="rounded" radius="6" fit="contain" src="uploads/q3-logo-5.webp" placeholder="Logo 5"></image-slot>
+  </div>
+
+  <article class="note" style="grid-template-columns: 1fr;">
+    <div class="note-body">
+      <header class="note-head">
+        <span class="note-id">03.A</span>
+        <h3 class="note-title">Legacy IP study, 비교 분석</h3>
+      </header>
+      <p class="note-prose">
+        Hello Kitty, Dragon Ball, Power Rangers, 매체 전환에서 살아남은 세 IP의 공통 변수는 <em>세계관 강도</em>가 아니었습니다.<br>
+        살아남은 건 팬과의 <b>관계 지속성</b>이었고, '리부트'란 IP가 아니라 IP를 둘러싼 관계 구조의 재설계였어요.
+      </p>
+    </div>
+  </article>
+
+  <!-- 03.B Sheepfarm Meta-land -->
+  <article class="note flip">
+    <div class="note-media">
+      <image-slot id="q3-meta" shape="rounded" radius="6"
+        src="uploads/q3-meta.webp"
+        placeholder="Sheepfarm in Meta-land 스크린"></image-slot>
+    </div>
+    <div class="note-body">
+      <header class="note-head">
+        <span class="note-id">03.B</span>
+        <h3 class="note-title">Sheepfarm in Meta-land</h3>
+        <span class="note-year">2021–2023</span>
+      </header>
+      <p class="note-prose">
+        Q.02의 가설을 메타버스로 옮길 때, 새 세계관이 아닌 <em>기존 팬 행동</em>을 매핑했습니다.<br>
+        자생 팬 활동이 그대로 UGC로 이전돼, 별도 온보딩 캠페인이 필요 없었어요.
+      </p>
+    </div>
+  </article>
+</section>
+
+<!-- ─────────────────────────── CONTACT -->
+<section class="contact">
+  <div class="head">
+    <span class="label">Contact</span>
+    <div>
+      <h2>다음 질문이 있다면, 같이 풀어봅시다</h2>
+      <dl class="links">
+        <dt>LinkedIn</dt><dd><a href="https://linkedin.com/in/ararakoh">linkedin.com/in/ararakoh</a></dd>
+        <dt>Email</dt><dd><a href="mailto:arara.koh@gmail.com">arara.koh@gmail.com</a></dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<script src="image-slot.js"></script>
+</body>
+</html>
